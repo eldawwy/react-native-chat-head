@@ -1,8 +1,10 @@
 import { NativeModules, Platform } from 'react-native';
 
 const isAndroid = Platform.OS === 'android';
-const _logWarning = () =>
+const _logWarning = () => {
   console.warn('react-native-chat-head is not supported on iOS');
+  return Promise.resolve(false);
+};
 const LINKING_ERROR =
   `The package 'react-native-chat-head' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
