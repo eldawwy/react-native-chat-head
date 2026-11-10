@@ -15,113 +15,94 @@
 
 ## Installation
 
-To install the package, use npm or yarn:
-
 ```bash
 npm install react-native-chat-head
 # or
 yarn add react-native-chat-head
 ```
 
-### Setup
+Then rebuild the Android app. That is all the setup there is:
 
-#### Step 1: Create Layout Files
+- The module is autolinked and works with both the old and the new architecture (React Native 0.72+).
+- The `SYSTEM_ALERT_WINDOW` permission is merged into your manifest automatically.
+- A default chat head (your app icon, a close button and a badge) is bundled.
+- The library is Android only. On iOS nothing is linked and every method resolves `false`.
 
-Create `android/app/src/main/res/layout/chat_head_layout.xml` with the following content:
+### Customising the chat head (optional)
+
+Add your own `android/app/src/main/res/layout/chat_head_layout.xml`. It replaces the bundled layout. Keep the view ids you want the library to drive; each of them is optional:
+
+| id | view | behaviour |
+| --- | --- | --- |
+| `chat_head_profile_iv` | `ImageView` | Shows your `android:src`, or the app icon when none is set |
+| `close_btn` | any view | Removes the chat head when pressed |
+| `chat_head_badge` | `TextView` | Receives the count from `updateChatBadgeCount` |
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="65dp"
   android:id="@+id/chat_head_root"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
->
-    <!-- Profile image for the chat head. -->
-    <ImageView
-      android:id="@+id/chat_head_profile_iv"
-      android:layout_width="60dp"
-      android:layout_height="60dp"
-      android:layout_marginTop="8dp"
-      android:src="@mipmap/ic_launcher"
-      tools:ignore="ContentDescription"
-    />
-    <!-- Close button -->
-    <ImageView
-      android:id="@+id/close_btn"
-      android:layout_width="20dp"
-      android:layout_height="20dp"
-      android:layout_marginLeft="40dp"
-      android:src="@drawable/ic_close"
-      tools:ignore="ContentDescription"
-    />
-    <!-- Chat head badge -->
-    <TextView
-      android:id="@+id/chat_head_badge"
-      android:layout_margin="5dp"
-      android:layout_width="26dp"
-      android:layout_height="26dp"
-      android:layout_alignParentStart="true"
-      android:text="1"
-    />
+  android:layout_width="65dp"
+  android:layout_height="wrap_content">
+
+  <ImageView
+    android:id="@+id/chat_head_profile_iv"
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:layout_marginTop="8dp"
+    android:src="@mipmap/ic_launcher_round" />
+
+  <ImageView
+    android:id="@+id/close_btn"
+    android:layout_width="20dp"
+    android:layout_height="20dp"
+    android:layout_marginStart="40dp"
+    android:src="@drawable/chat_head_close" />
+
+  <TextView
+    android:id="@+id/chat_head_badge"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
+    android:layout_alignParentStart="true"
+    android:layout_margin="5dp" />
 </RelativeLayout>
 ```
 
-Create `android/app/src/main/res/layout/dismiss_icon_layout.xml` with the following content:
-
-```xml
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:layout_gravity="bottom|center_horizontal"
->
-    <!-- Dismiss icon -->
-    <ImageView
-      android:id="@+id/dismiss_icon"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:layout_gravity="bottom|center_horizontal"
-      android:src="@android:drawable/ic_menu_close_clear_cancel"
-      android:layout_marginBottom="16dp"
-    />
-</RelativeLayout>
-```
-
-Add an image named `ic_close.png` in `android/app/src/main/res/drawable-nodpi`.
+`@drawable/chat_head_close` is the close icon bundled with the library.
 
 ## Usage
-
-Import the library and use the provided methods to manage chat heads:
 
 ```javascript
 import ChatHead from "react-native-chat-head";
 
-// Check if overlay permission is granted
-const hasPermission = await ChatHead.checkOverlayPermission();
+let granted = await ChatHead.checkOverlayPermission();
+if (!granted) {
+  // Opens the system settings screen and resolves when the user comes back.
+  granted = await ChatHead.requestPermission();
+}
 
-// Request overlay permission
-await ChatHead.requestPermission();
+if (granted) {
+  await ChatHead.showChatHead();
+  await ChatHead.updateChatBadgeCount(1);
+}
 
-// Show chat head
-ChatHead.showChatHead();
-
-// Hide chat head
-ChatHead.hideChatHead();
-
-// Update chat badge count
-ChatHead.updateChatBadgeCount(1);
+await ChatHead.hideChatHead();
 ```
+
+Tapping the chat head brings your app back to the foreground. Dragging moves it.
 
 ## API
 
-- `checkOverlayPermission()`: Checks if the overlay permission is granted. Returns a boolean.
-- `requestPermission()`: Requests the overlay permission from the user.
-- `showChatHead()`: Displays the chat head.
-- `hideChatHead()`: Hides the chat head.
-- `updateChatBadgeCount(count)`: Updates the badge count on the chat head.
+Every method returns a `Promise<boolean>`.
+
+- `checkOverlayPermission()`: `true` when the "display over other apps" permission is granted.
+- `requestPermission()`: opens the system permission screen and resolves with the permission state once the user returns. Resolves `true` right away when it is already granted.
+- `showChatHead()`: shows the chat head. Resolves `false` when the permission is missing.
+- `hideChatHead()`: removes the chat head.
+- `updateChatBadgeCount(count)`: sets the badge text. Resolves `false` when no chat head is shown.
+
+`requrestPermission()` is kept as a deprecated alias of `requestPermission()`.
 
 ## Contributing
 
