@@ -4,7 +4,7 @@ import {
   showChatHead,
   hideChatHead,
   updateChatBadgeCount,
-  requrestPermission,
+  requestPermission,
   checkOverlayPermission,
 } from 'react-native-chat-head';
 
@@ -12,13 +12,7 @@ export default function App() {
   const [granted, setGranted] = React.useState(false);
 
   const _requestPermission = async () => {
-    requrestPermission()
-      .then((res) => {
-        console.log('ress', res);
-      })
-      .catch((err) => {
-        console.log('err', err);
-      });
+    setGranted(await requestPermission());
   };
 
   const _checkPermission = async () => {
@@ -29,12 +23,10 @@ export default function App() {
     <View style={styles.container}>
       <Text>granted: {granted ? 'true' : 'false'}</Text>
       <Button title="checkOverlayPermission" onPress={_checkPermission} />
-      <Button title="requrestPermission" onPress={_requestPermission} />
+      <Button title="requestPermission" onPress={_requestPermission} />
       <Button
         title="Show Chat Head"
-        onPress={() => {
-          console.log('showChatHead', showChatHead());
-        }}
+        onPress={() => showChatHead()}
         disabled={!granted}
       />
       <Button

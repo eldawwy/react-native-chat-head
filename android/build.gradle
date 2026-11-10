@@ -47,12 +47,11 @@ android {
     }
   }
 
-    compileSdkVersion 35
+  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
-    targetSdkVersion 35
-
+    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
   }
 
   buildTypes {
@@ -76,15 +75,8 @@ repositories {
   google()
 }
 
-
 dependencies {
-  // For < 0.71, this will be from the local maven repo
-  // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
-  // For 16KB page size support, ensure the React Native version is recent (0.74.0+)
-  // The dependency is typically managed by the root project, but we'll ensure a recent version is used if not.
-  // The new architecture setup should handle NDK/16KB support if the main project is configured correctly.
-  // We will rely on the consuming project's React Native version, but ensure the library is compatible.
-  // The standard dependency for modern RN is:
+  // The version is supplied by the React Native Gradle plugin of the app.
   implementation "com.facebook.react:react-android"
 }
 

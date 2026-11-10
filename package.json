@@ -1,6 +1,6 @@
 {
   "name": "react-native-chat-head",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "android chat head",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -11,10 +11,6 @@
     "src",
     "lib",
     "android",
-    "ios",
-    "cpp",
-    "*.podspec",
-    "!ios/build",
     "!android/build",
     "!android/gradle",
     "!android/gradlew",
@@ -31,12 +27,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "bob build",
+    "build": "bob build",
     "release": "release-it"
   },
   "keywords": [
     "react-native",
-    "ios",
     "android",
     "chat-head",
     "floating-bubble",

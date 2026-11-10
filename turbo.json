@@ -19,8 +19,6 @@
     "build:ios": {
       "inputs": [
         "package.json",
-        "*.podspec",
-        "ios",
         "src/*.ts",
         "src/*.tsx",
         "example/package.json",
